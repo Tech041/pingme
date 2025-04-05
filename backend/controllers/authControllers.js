@@ -38,6 +38,7 @@ export const signup = async (req, res) => {
     await newUser.save();
     // Generating Token
     generateToken(newUser._id, res);
+
     return res.json({
       success: true,
       userData: {
@@ -67,7 +68,7 @@ export const login = async (req, res) => {
     if (!user || !isPasswordCorrect) {
       return res.json({
         success: false,
-        message: "Invalid username or passowrd",
+        message: "Invalid username or password",
       });
     }
     generateToken(user._id, res);

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
 
@@ -45,7 +46,13 @@ export const sendMessage = async (req, res) => {
 export const getMessage = async (req, res) => {
   try {
     const { id: userToChatId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userToChatId)) {
+      return res.json({ success: false, messages: "Invalid UserId" });
+    }
     const senderId = req.user._id;
+    if (!mongoose.Types.ObjectId.isValid(senderId)) {
+      return res.json({ success: false, messages: "Invalid SenderId" });
+    }
     const conversation = await Conversation.findOne({
       participants: {
         $all: [senderId, userToChatId],
@@ -55,7 +62,7 @@ export const getMessage = async (req, res) => {
       return res.json([]);
     }
     const messages = conversation.messages;
-    return res.json(messages);
+    return res.json({ success: true, messages });
   } catch (error) {
     console.log("Error in getMessage controller:", error.message);
     res.json({ success: false, message: "Internal server errror" });
