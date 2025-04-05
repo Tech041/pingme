@@ -1,4 +1,3 @@
-import { strict } from "assert";
 import jwt from "jsonwebtoken";
 const generateToken = (userId, res) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -9,7 +8,7 @@ const generateToken = (userId, res) => {
     // To prevent access of cookie from Javascript(cross site scripting attacks) we use httpOnly
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development",
+    secure: true,
   });
 };
 export default generateToken;

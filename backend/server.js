@@ -6,18 +6,20 @@ import connectDB from "./configs/mongodb.js";
 import messageRouter from "./routes/messageRoutes.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/userRoutes.js";
+import { app, server } from "./socket/socket.js";
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
 // To parse incoming requests with JSON payload from req.body
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    cors: {
+      origin: ["http://localhost:3000"],
+      methods: ["GET", "POST"],
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
+    },
   })
 );
 
@@ -33,6 +35,6 @@ app.use("/api/users", userRouter);
 app.get("/", (req, res) => {
   res.send("API IS WORKING");
 });
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("Server Running on Port:", PORT);
 });

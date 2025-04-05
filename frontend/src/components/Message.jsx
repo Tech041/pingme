@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import useConversation from "../zustand/useConversation";
 
-
 const Message = ({ message }) => {
   const { authUser } = useContext(AppContext);
   const { selectedConversation } = useConversation();
@@ -12,6 +11,7 @@ const Message = ({ message }) => {
     ? authUser.userData.profilePic
     : selectedConversation?.profilePic;
   const bgColor = fromMe ? "bg-green-500" : "bg-white";
+  const shakeClass = message.shouldShake ? "shake" : "";
   // const formattedTime = extractTime(message.createdAt);
   return (
     <div className={`chat ${chatClassName}`}>
@@ -21,7 +21,7 @@ const Message = ({ message }) => {
         </div>
       </div>
 
-      <div className={`chat-bubble text-black  ${bgColor}`}>
+      <div className={`chat-bubble text-black ${shakeClass} ${bgColor}`}>
         {message.message}
       </div>
       <div className="chat-footer opacity-50 text-xs flex gap-1 items-center">

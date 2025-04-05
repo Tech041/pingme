@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
+import { getReceiverSocketId } from "../socket/socket.js";
+import { io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
   try {
@@ -29,12 +31,18 @@ export const sendMessage = async (req, res) => {
       conversation.messages.push(newMessage._id);
     }
 
-    // Socket.IO Functionality
-
     // This way or use Promise.all to make the saving in database run in parallel
     // await conversation.save();
     // await newMessage.save();
     await Promise.all([conversation.save(), newMessage.save()]);
+
+    // Socket.IO Functionality
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      // this io.to is used to send message to specific client/user
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
     return res.json({ success: true, newMessage });
   } catch (error) {
     console.log("ErrorError in sendMessage controller:", error.message);
